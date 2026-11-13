@@ -68,8 +68,10 @@ Late century (2070–2099) vs. historical, same scenario; whole domain; range ac
     numbers.
 - **The API matches raw RUNOFF:** at Fairbanks, curated `runoff` = raw RUNOFF rounded to whole mm.
 
-## 4. Caveat: NCAR RCP4.5 historical period (see notes/05)
+## 4. Caveat: these files are NCAR's preliminary release (see notes/05)
 
-NCAR's raw RCP4.5 and RCP8.5 runs differ in historical years. VIC's RCP4.5 historical PRCP
-doesn't match the RCP4.5 met forcing on disk, and appears offset by 30 years. RCP4.5 baselines
-(and so RCP4.5 changes) are suspect until this is resolved. RCP8.5 is internally consistent.
+The beegfs files are NCAR's preliminary release (2020/21), not the published release SNAP
+curated. In the preliminary release, the RCP4.5 VIC outputs are year-misaligned with their
+forcing, so **the RCP4.5 numbers above shouldn't be used**. RCP8.5 is internally consistent and
+matches the API (published release) closely, so the RCP8.5 and Daymet-independent conclusions
+should hold. Confirm on a few published files before quoting exact values.
