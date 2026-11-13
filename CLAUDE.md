@@ -80,7 +80,13 @@ dataset and endpoint names in `ua-snap/data-api`.
 | Raw NCAR met | `/beegfs/CMIP6/cparr4/AK_NCAR_12km/met/` | tmax, tmin, pcp |
 | Curated outputs | Rasdaman `hydrology` coverage via data-api | Curated GeoTIFFs not found on Chinook |
 
-**Treat everything under `/beegfs/CMIP6/cparr4/` as read-only source data.** It belongs to another
+**Access status (2026-11-13):** every file under `/beegfs/CMIP6/cparr4/AK_NCAR_12km/` is
+owner-only (`-rwx------`). jdpaul3 can list the directories but can't read the files, even
+outside the sandbox. The user is asking an admin for access to
+`/beegfs/CMIP6/NCAR_VIC/NCAR_NetCDF/` instead. Its layout is unknown until then. Once it's
+readable, check what it holds (daily/monthly, `wf`/`ws`, Daymet run) and update the table above.
+
+**Treat everything under `/beegfs/CMIP6/cparr4/` and `/beegfs/CMIP6/NCAR_VIC/` as read-only source data.** It belongs to another
 user. Open files read-only and write all outputs elsewhere. Ignore stray `*.ncks.tmp` files.
 
 ## Related repos (read through `gh api`, don't clone into source dirs)
