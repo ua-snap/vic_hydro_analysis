@@ -10,10 +10,11 @@ monofont: "DejaVu Sans Mono"
 **Bottom line.** The variable hydrologists care about most, `runoff`, is VIC-Hydro's weakest. It is **surface runoff only** (baseflow was dropped during curation), and it's reported
 for **single 12 km grid cells**. For the engineers and hydrologists asking, that's the wrong
 variable at the wrong scale. Three of the 12 variables (`tmax`, `tmin`, `pcp`) duplicate newer
-SNAP products. Streamflow questions are better answered by our RASM-based `/arctic_hydrology`
-service. Even so, VIC-Hydro is SNAP's **only** projection of snow water equivalent (SWE),
-evapotranspiration, soil moisture, snowmelt and glacier melt, and our only end-of-century,
-multi-model hydrology ensemble for Alaska. **Recommendation: Option C (reprocess)**, scoped
+SNAP products. Snow water equivalent (SWE) is also available from CMIP6 (`/cmip6`, `snw`),
+though only at global-model resolution. Streamflow questions are better answered by our
+RASM-based `/arctic_hydrology` service. Even so, VIC-Hydro is SNAP's **only** projection of
+evapotranspiration, soil moisture, snowmelt and glacier melt, our only 12 km SWE, and our only
+end-of-century, multi-model hydrology ensemble for Alaska. **Recommendation: Option C (reprocess)**, scoped
 tightly, with a planned sunset once CMIP6-based snow and hydrology products are available.
 
 # 1. What it is (raw NCAR data)
@@ -35,7 +36,9 @@ below works from the existing outputs.
 We serve 12 variables (`evap, glacier_melt, iwe, pcp, runoff, sm1–3, snow_melt, swe, tmax, tmin`)
 as **decadal averages of monthly totals, means or maxima**, rounded to whole millimeters, for each
 model, scenario, month and decade. Access is by **point query only** (one 12 km cell per request)
-through the data-api, earthmaps.io and Arctic-EDS. Arctic-EDS shows only `evap` and `runoff`.
+through the data-api, earthmaps.io and Arctic-EDS. Arctic-EDS charts monthly runoff and
+evapotranspiration against 1950–2009, offers all variables as a CSV download, and labels surface
+runoff simply "Runoff", including in its headline sentence on percent change in annual runoff.
 **Not served:** baseflow or total runoff, the Daymet historical run, change-from-baseline values,
 multi-model summaries, and any watershed or area summaries.
 
@@ -45,7 +48,7 @@ multi-model summaries, and any watershed or area summaries.
 |:--------------------------------------|:-------------------------|:----------------------------|
 | Watershed water yield and its projected change | **Yes** (surface runoff + baseflow, summed over a watershed) | **No**: surface runoff only, per cell, no area query |
 | Streamflow / hydrographs at a river point | Only after routing (not done) | **No** (use `/arctic_hydrology`) |
-| Snowpack (SWE) and snowmelt timing | **Yes**, daily | **Partly**: monthly peak SWE, monthly melt totals |
+| Snowpack (SWE) and snowmelt timing | **Yes**, daily | **Partly**: monthly peak SWE, monthly melt totals. SWE also in `/cmip6` (`snw`), coarser |
 | Evapotranspiration, soil-moisture anomalies | **Yes**, best as relative change | **Partly**: per cell, no baseline or change values |
 | Glacier-melt contribution | **Yes** (1,913 glacier cells) | **Partly**: per cell |
 | Range across climate models | **Yes** (10 models × 2 scenarios) | **Partly**: no multi-model summary |
@@ -70,8 +73,8 @@ and gives a misleading seasonal pattern.
 | | **A. Keep as is** | **B. Remove entirely** | **C. Reprocess** (re-curate + aggregate by watershed) |
 |:---------|:--------------------|:----------------------|:----------------------------------------|
 | **What** | No changes. | Retire the Rasdaman coverage, the `/hydrology` route and the Arctic-EDS section. Point users to the NCAR source and `/arctic_hydrology`. | Add `baseflow` and `total_runoff` (summed daily, before rounding). Add change from a historical baseline (including the Daymet run) and multi-model median, range and sign agreement. Serve **HUC8/HUC10 averages** keyed to existing `/places` IDs. Drop `tmax`, `tmin` and `pcp`. |
-| **Pros** | No cost. Nothing breaks. Keeps our only SWE until the CMIP6 and WRF-ERA5 snow products ship. | Removes a product experts say invites misuse. Less to maintain. Sends streamflow users to the better tool. | Fixes the critique (wrong variable, wrong scale). Keeps unique variables and the 10-model, end-of-century range, which complements RASM (one model family, mid-century only). Change plus model agreement is the defensible way to present uncalibrated output. Reuses the existing pipeline and HUC IDs. |
-| **Cons** | The critique stands. `runoff` invites misreading as total runoff. Redundant variables stay. No change or uncertainty framing. | Loses SWE, ET, soil-moisture and glacier-melt projections, leaving a gap until CMIP6 snow ships. Breaks existing clients. | Staff time across curation, Rasdaman, API and front ends. Still CMIP5/BCSD and uncalibrated: better presentation, not better skill. Watershed averages are not routed streamflow. |
+| **Pros** | No cost. Nothing breaks. Keeps our only 12 km SWE until the downscaled CMIP6 and WRF-ERA5 snow products ship. | Removes a product experts say invites misuse. Less to maintain. Sends streamflow users to the better tool. | Fixes the critique (wrong variable, wrong scale). Keeps unique variables and the 10-model, end-of-century range, which complements RASM (one model family, mid-century only). Change plus model agreement is the defensible way to present uncalibrated output. Reuses the existing pipeline and HUC IDs. |
+| **Cons** | The critique stands. `runoff` invites misreading as total runoff. Redundant variables stay. No change or uncertainty framing. | Loses ET, soil-moisture, snowmelt and glacier-melt projections. SWE drops to coarse CMIP6 `snw` until downscaled CMIP6 snow ships. Breaks existing clients. | Staff time across curation, Rasdaman, API and front ends. Still CMIP5/BCSD and uncalibrated: better presentation, not better skill. Watershed averages are not routed streamflow. |
 | **Effort** | None | Low | Moderate |
 
 # 5. Recommendation and next steps
@@ -84,11 +87,11 @@ and gives a misleading seasonal pattern.
    `/arctic_hydrology` for streamflow.
 2. **Reprocess (moderate):** add total runoff, change from baseline, multi-model statistics, and
    HUC8/HUC10 summaries. Drop the redundant temperature and precipitation variables.
-3. **Retire later:** once CMIP6 snow and a CMIP6-forced hydrology product cover SWE and runoff,
+3. **Retire later:** once downscaled CMIP6 snow and a CMIP6-forced hydrology product cover SWE and runoff,
    deprecate VIC-Hydro in stages.
 
 Option B is reasonable only if we can't fund step 2. If so, do step 1 now and remove the product
-when the CMIP6 snow data ships. The pending baseflow numbers will show how big the runoff problem
+when the downscaled CMIP6 snow data ships. The pending baseflow numbers will show how big the runoff problem
 is. They would change this recommendation only if baseflow turns out to be negligible, which is
 not expected.
 
