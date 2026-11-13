@@ -81,8 +81,11 @@ dataset and endpoint names in `ua-snap/data-api`.
 | Curated outputs | Rasdaman `hydrology` coverage via data-api | Curated GeoTIFFs not found on Chinook |
 
 **Access status (2026-11-13):**
-- Every file under `/beegfs/CMIP6/cparr4/AK_NCAR_12km/` is owner-only (`-rwx------`). jdpaul3
-  can list the directories but can't read the files, even outside the sandbox.
+- `/beegfs/CMIP6/cparr4/AK_NCAR_12km/` (vic_hydro and met) is now readable. **It holds NCAR's
+  PRELIMINARY release** (files created 2020-11, ncks 2021-04). SNAP's curation used the later
+  published "replacement" release (Atlas, Feb 2023, now gone; re-downloadable from NCAR). The
+  preliminary RCP4.5 runs have year misalignments; RCP8.5 appears unchanged between releases.
+  See notes/05.
 - `/beegfs/CMIP6/NCAR_VIC/NCAR_NetCDF/` is readable but is **not** NCAR source data. It's a
   derived set made in Feb 2025: daily 1950–2099 stacks, one file per model/scenario (15.6 GB
   each), **reprojected to EPSG:3338** (~11.94 km, 318×224, a transform attribute but no coordinate
