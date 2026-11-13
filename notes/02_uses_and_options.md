@@ -22,7 +22,7 @@ Things a hydrologist or engineer could reasonably do with the raw files:
 ## Uses of the curated data (decadal means of monthly summaries, per cell, point API)
 
 - Point "what's the climate and hydrology trajectory here" screening in earthmaps.io and Arctic-EDS.
-- Seasonal shifts in snow (`swe`, `snow_melt`). Currently the only SWE in the API.
+- Seasonal shifts in snow (`swe`, `snow_melt`). The only 12 km SWE in the API (`/cmip6` `snw` is coarse).
 - Coarse ET change and seasonal water-balance context for a location.
 - **Weak:** `runoff` is surface-only, rounded to whole mm, and per cell. It can't be summed into
   a basin without bulk-downloading GeoTIFFs. `pcp`, `tmax` and `tmin` are redundant.
@@ -34,7 +34,7 @@ Things a hydrologist or engineer could reasonably do with the raw files:
 ### A. Keep as is
 
 - **Pros:** zero cost. No broken links or clients (earthmaps.io, Arctic-EDS hydrology tab, CSV
-  users). Only SWE source until the CMIP6/WRF-ERA5 snow products ship. Correctly labeled as
+  users). Only 12 km SWE until the downscaled CMIP6/WRF-ERA5 snow products ship. Correctly labeled as
   surface runoff in the API docs.
 - **Cons:** the feedback stands. The flagship variable (`runoff`) is the least defensible one
   (missing baseflow → understates yield and misrepresents winter flow; per-cell values invite
@@ -46,7 +46,7 @@ Things a hydrologist or engineer could reasonably do with the raw files:
 - **Pros:** removes a product that experts call not useful and that invites misuse. Less
   maintenance (Rasdaman coverage, API route, EDS tab, tests). Pushes streamflow users to
   `/arctic_hydrology`, which is the better product for that question.
-- **Cons:** loses the only SWE, ET, soil-moisture, snowmelt and glacier-melt projections in the
+- **Cons:** loses the only 12 km SWE and the only ET, soil-moisture, snowmelt and glacier-melt projections in the
   API, and the only 10-GCM, 2-scenario, end-of-century hydrology for Alaska (RASM covers
   mid-century, CESM2 and SSP3-7.0 only). Breaks existing clients and any downstream users.
   Statewide coverage includes SE Alaska glaciers. Throws away work when a modest fix addresses

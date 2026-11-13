@@ -31,8 +31,17 @@ Working notes (2026-11-13). Sources: `vic_hydro_assessment.md`, `ua-snap/ardac-c
 - API (`routes/hydrology.py`): **point queries only**. Each call returns the full
   model × scenario × month × decade cube for one 12 km cell. There is no area or watershed query.
   - `?summarize=mmm` gives min/mean/max across decades within each model.
-  - Arctic-EDS (`routes/eds.py` → `eds_hydrology_data`) shows only `evap` and `runoff`,
-    summarized as min/mean/max over 4 eras (historical, early, mid and late century).
+  - Arctic-EDS hydrology section (`ua-snap/arctic-eds`, `app/components/reports/Hydrology.vue`):
+    - **Charts** monthly `runoff` and `evap`: mean of models with a lowest-to-highest band, by
+      era (2010–39, 2040–69, 2070–99) against 1950–2009.
+    - **Downloads** the full `/hydrology/point` CSV with all 12 variables.
+    - Summary comes from `routes/eds.py` → `eds_hydrology_data`: min/mean/max over 4 eras.
+    - Labels the variable plain "Runoff". The headline sentence reports "% change in annual runoff
+      by mid-century", which is surface runoff only.
+    - The data panel says "9 GCMs" and "Baseline: Daymet, 1950–2009 (modeled)". The API docs
+      list 10 models, and 1950–2009 is the BCSD/GCM historical period, not the Daymet run
+      (1980–2016). **Check both with the EDS team.**
+    - Read from the repo's default branch, not the live page (it's rendered client-side).
   - `runoff` is documented as "surface runoff", but users will likely read it as total.
 - Curated GeoTIFFs were not found on Chinook. Rasdaman appears to be the only copy.
 
@@ -41,7 +50,7 @@ Working notes (2026-11-13). Sources: `vic_hydro_assessment.md`, `ua-snap/ardac-c
 | VIC-Hydro variable(s) | Other SNAP source | Notes |
 |---|---|---|
 | `tmax`, `tmin`, `pcp` | `/cmip6_downscaled` (13 CMIP6 GCMs, 4 km, daily, 1965–2100); `/era5wrf` (4 km, 1960–2023); `/taspr` (2 km, CRU/AR5) | Fully redundant. All are newer (CMIP6) or higher resolution. |
-| `swe` | **None served yet.** `/snow` is CRU-based annual *snowfall* equivalent (SFE), not SWE. CMIP6 snow and WRF-ERA5 snow variables are in development. | VIC-Hydro is currently the **only SWE source** in the API. |
+| `swe` | **`/cmip6`**: `snw` (SWE, mm), monthly, 1950–2100, pan-Arctic, most models (not KACE-1-0-G). Downscaled CMIP6 snow and WRF-ERA5 snow are in development. (`/snow` is CRU-based *snowfall* equivalent, not SWE.) | Partly redundant. VIC-Hydro is the only **12 km** SWE until the downscaled products ship. `/cmip6` is at global-model resolution (grid spacing not stated in the API docs). |
 | `runoff` (as a stand-in for streamflow) | **`/arctic_hydrology`**: RASM-modeled daily streamflow and water temperature on 34,346 MERIT-Hydro stream segments in Alaska and Canada. Blaskey et al. 2024, doi:10.18739/A25M62870. Historical 1990–2021 (ERA5-WRF "Blaskey" baseline) and mid-century 2034–2065, CESM2 under SSP3-7.0, plus PGW runs. ~60 flow statistics and daily hydrograph climatologies. | Already answers "give me streamflow on a river". Limits: mid-century only, one GCM family, one scenario. |
 | `evap`, `sm1–3`, `snow_melt`, `glacier_melt`, `iwe` | None | Unique to VIC-Hydro. |
 | (CONUS analogue) | `/conus_hydrology`: PRMS streamflow on NHM segments, with USGS gage comparisons | Shows the shape of product hydrologists expect: segment streamflow plus an observed baseline. |
