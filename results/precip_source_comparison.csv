@@ -1,0 +1,6 @@
+location,lat,lon,vic_hist_rcp45_vs_rcp85_maxdiff,vic_models_with_pcp,vic_models_null_pcp,vic_P_hist,vic_P_hist_min,vic_P_hist_max,vic_ET_hist,vic_Rsurf_hist,vic_dP_pct_rcp85,vic_dP_pct_rcp85_min,vic_dP_pct_rcp85_max,era5wrf_P_1980_2009,cmip6_P_hist,cmip6_P_hist_min,cmip6_P_hist_max,cmip6_n_models,cmip6_dP_pct_ssp585,cmip6_dP_pct_ssp585_min,cmip6_dP_pct_ssp585_max,cmip6_ssp585_n_models,era5wrf_P_1980_2009_vs_vic_pct,resid_with_era5wrf_P_1980_2009,cmip6_P_hist_vs_vic_pct,resid_with_cmip6_P_hist,resid_with_vic_P
+Fairbanks,64.8,-147.7,56.3,9,HadGEM2-ES,317.0,303.7,337.7,249.3,34.5,48.1,24.8,72.6,444.9,421.5,406.8,434.0,13.0,41.7,21.8,60.2,12.0,40.4,161.0,33.0,137.7,33.1
+Palmer,61.6,-149.1,40.3,9,HadGEM2-ES,473.5,450.0,485.0,352.4,82.2,38.7,24.9,55.3,635.2,569.1,550.6,595.5,13.0,35.4,15.4,53.4,12.0,34.2,200.6,20.2,134.5,38.8
+Juneau,58.3,-134.4,165.0,9,HadGEM2-ES,2452.8,2366.7,2562.7,351.8,824.2,17.5,10.0,29.0,,,,,,,,,,,,,,1276.8
+Bethel,60.8,-161.8,46.3,9,HadGEM2-ES,483.9,460.3,506.3,188.0,133.6,34.8,13.1,62.5,585.5,576.0,565.5,589.4,13.0,36.3,21.1,52.2,12.0,21.0,263.9,19.0,254.4,162.3
+Utqiagvik,71.3,-156.8,12.3,9,HadGEM2-ES,92.7,86.7,100.3,49.5,31.0,62.3,34.4,98.8,,,,,,,,,,,,,,12.2
