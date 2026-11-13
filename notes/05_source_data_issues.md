@@ -70,6 +70,37 @@ mismatch (the API grid is reprojected to EPSG:3338).
 | `pcp` labelled RCP8.5 | RCP8.5 met | RCP8.5 met |
 | `pcp` labelled **RCP4.5** | **RCP4.5 met**, which drove neither served hydrology series | RCP4.5 met |
 
+**Confirmed from published GDEX files (2026-11-13)**, with daily MD5s identical to the 2023 wget
+list:
+- Published `ACCESS1-3_rcp45_BCSD_wf_1985.nc` is **cell-for-cell identical** (100% of cell-days,
+  PRCP and RUNOFF) to the RCP8.5 run for 1985.
+- Its PRCP equals the published **RCP8.5** met pcp (annual r = 1.000, median |d| 0 mm).
+- It differs from the published **RCP4.5** met pcp by a median of 99 mm/yr.
+- So NCAR's published release labels one shared historical VIC run (RCP8.5-forced) as both
+  scenarios, while shipping scenario-specific historical met files. The year where RCP4.5 switches
+  to its own forcing comes from the full alignment run (job 744119).
+
+**Is this a known/documented issue? No (searched 2026-11-13).**
+- Not documented in the NCAR README (`oconus_bcsd_vic_projections_readme.pdf`, GDEX d010111
+  docs, PDF dated 2022-04). It only says outputs "are organized by emissions scenario … then there
+  are files for each year from 1950-2099".
+- Not documented in the paper (Mizukami et al. 2022, *Climate Services* 27:100312; NSF PAR
+  copy). The paper does describe glacier initialization run with CCSM4 only, and a 1950–1954
+  spin-up "cycled five times for each downscaled GCM forcing". It says nothing about scenario
+  handling of the historical period.
+- Not documented on the GDEX or UCAR DASH catalog pages: no changelog, version notes or errata.
+  DASH: "Resource Version: N/A". Web searches found no errata or user reports.
+- **Interpretation.** Sharing one historical run across RCPs is a normal design, because the GCM
+  "historical" experiment is the same for both. That part is probably intentional. The
+  undocumented oddity is that NCAR's **RCP4.5 met files differ from RCP8.5 in the historical
+  years** (BCSD was apparently applied separately per scenario), yet the RCP4.5 hydrology wasn't
+  driven by them. Anyone pairing RCP4.5 met with RCP4.5 hydrology before the switch-over year
+  gets mismatched data.
+- Contacts: GDEX lists Bob Dattore (dattore@ucar.edu) for d010111; the science contacts are the
+  authors at NCAR RAL (Mizukami, Newman).
+- Also confirmed from the paper: Section 4 says the VIC parameters are **"essentially
+  uncalibrated (Section 2)"**. This resolves the CLAUDE.md open item.
+
 With section 0 in mind: the published release appears to use **one shared historical VIC run for
 both scenarios**, which equals the preliminary RCP8.5 run. Its **met files are still
 scenario-specific in the historical period**: the API's RCP4.5 `pcp` matches the preliminary
