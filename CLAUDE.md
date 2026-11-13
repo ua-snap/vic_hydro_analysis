@@ -80,11 +80,20 @@ dataset and endpoint names in `ua-snap/data-api`.
 | Raw NCAR met | `/beegfs/CMIP6/cparr4/AK_NCAR_12km/met/` | tmax, tmin, pcp |
 | Curated outputs | Rasdaman `hydrology` coverage via data-api | Curated GeoTIFFs not found on Chinook |
 
-**Access status (2026-11-13):** every file under `/beegfs/CMIP6/cparr4/AK_NCAR_12km/` is
-owner-only (`-rwx------`). jdpaul3 can list the directories but can't read the files, even
-outside the sandbox. The user is asking an admin for access to
-`/beegfs/CMIP6/NCAR_VIC/NCAR_NetCDF/` instead. Its layout is unknown until then. Once it's
-readable, check what it holds (daily/monthly, `wf`/`ws`, Daymet run) and update the table above.
+**Access status (2026-11-13):**
+- Every file under `/beegfs/CMIP6/cparr4/AK_NCAR_12km/` is owner-only (`-rwx------`). jdpaul3
+  can list the directories but can't read the files, even outside the sandbox.
+- `/beegfs/CMIP6/NCAR_VIC/NCAR_NetCDF/` is readable but is **not** NCAR source data. It's a
+  derived set made in Feb 2025: daily 1950–2099 stacks, one file per model/scenario (15.6 GB
+  each), **reprojected to EPSG:3338** (~11.94 km, 318×224, a transform attribute but no coordinate
+  variables). It holds only `EVAP/` (20 files), `RUNOFF/` (20) and `SM1/` (7). There's **no
+  BASEFLOW**, so it can't support the baseflow check. A `.Rhistory` there shows a point extraction
+  for "kennecott_mines".
+- The NCAR gateway (`ucar.ral.hydro.predictions.alaska.vic.daily`) serves daily per-year files
+  only. Re-downloading `wf` for selected models/years is the fallback and needs a personal NCAR
+  token. Don't use the token embedded in ardac-curation's download scripts.
+- HadGEM2-ES returns **null `pcp`, `tmax` and `tmin`** from `/hydrology/point`, though its
+  hydrology variables are present.
 
 **Treat everything under `/beegfs/CMIP6/cparr4/` and `/beegfs/CMIP6/NCAR_VIC/` as read-only source data.** It belongs to another
 user. Open files read-only and write all outputs elsewhere. Ignore stray `*.ncks.tmp` files.
