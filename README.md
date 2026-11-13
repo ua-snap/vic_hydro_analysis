@@ -54,8 +54,15 @@ report:
 
 ```sh
 conda activate snap-geo
-pandoc report/vic_hydro_summary.md -o report/vic_hydro_summary.pdf --pdf-engine=xelatex
+python scripts/fig_cell_vs_watershed.py <huc8.gpkg> <alaska_grid_12km_production.nc> figures/fig1_cell_vs_watershed
+cd report
+pandoc vic_hydro_summary.md --template=brief-template.tex --pdf-engine=xelatex \
+  --resource-path=.:.. -o vic_hydro_summary.pdf
 ```
+
+`brief-template.tex` is a minimal pandoc template. Chinook's system TeX Live is missing
+`unicode-math`'s dependencies and `titling`/`titlesec`, so pandoc's default template won't build.
+`huc8.gpkg` comes from `scripts/fetch_huc8.py`. The grid file comes from `ua-snap/ardac-curation`.
 
 ## References
 

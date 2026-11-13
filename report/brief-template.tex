@@ -1,0 +1,59 @@
+% Minimal pandoc LaTeX template for the two-page brief.
+% Uses only packages present in Chinook's system TeX Live (no unicode-math, titling, titlesec).
+% Build: pandoc vic_hydro_summary.md --template=brief-template.tex --pdf-engine=xelatex \
+%          --resource-path=.:.. -o vic_hydro_summary.pdf
+\documentclass[$if(fontsize)$$fontsize$$else$10pt$endif$,letterpaper]{article}
+\usepackage[$if(geometry)$$geometry$$else$margin=0.6in$endif$]{geometry}
+\usepackage{fontspec}
+\setmainfont{$if(mainfont)$$mainfont$$else$Liberation Sans$endif$}
+\setmonofont[Scale=0.88]{$if(monofont)$$monofont$$else$DejaVu Sans Mono$endif$}
+\usepackage{xcolor}
+\definecolor{ink2}{HTML}{52514E}
+\definecolor{accent}{HTML}{1C5CAB}
+\definecolor{pending}{HTML}{B5470F}
+\usepackage{graphicx}
+\usepackage{longtable,booktabs,array,calc,etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+\setlength{\LTpre}{3pt}
+\setlength{\LTpost}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\usepackage[font=small,labelfont=bf,skip=3pt]{caption}
+\usepackage{enumitem}
+\setlist{itemsep=1pt,topsep=2pt,parsep=0pt,leftmargin=1.4em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\providecommand{\tightlist}{\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=accent,linkcolor=accent,pdftitle={$title$}}
+\setcounter{secnumdepth}{-\maxdimen}
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {-1.4ex plus -.4ex minus -.2ex}{0.5ex}{\normalfont\large\bfseries\color{accent}}}
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{%
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}\fi}
+\def\fps@figure{htbp}
+\makeatother
+\pagestyle{empty}
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+\begin{document}
+{\LARGE\bfseries $title$\par}
+\vspace{2pt}
+{\small\color{ink2} $subtitle$\par}
+\vspace{4pt}
+\hrule
+\vspace{4pt}
+
+$body$
+
+\end{document}
