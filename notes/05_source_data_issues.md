@@ -21,8 +21,12 @@ Found 2026-11-13 while running the baseflow analysis. Scripts: `scripts/check_ap
   neither beegfs scenario, while earlier decades match.
 - **RCP8.5 looks unchanged between releases:** the API matches beegfs RCP8.5 in most decades.
   The RCP8.5 baseflow results in notes/04 should therefore hold for the published data.
-- **To confirm:** download a handful of published `wf` files from NCAR (e.g. ACCESS1-3 rcp45
-  1985, CanESM2 rcp45 2060, CCSM4 rcp85 2050) and re-run the checks.
+- **Confirmed for CanESM2 RCP4.5 2060** using the published release from NCAR GDEX (`d010111`,
+  anonymous download; MD5 identical to the Feb 2023 wget checksums).
+  - Published VIC PRCP equals published met pcp: identical annual totals, r = 1.000.
+  - The preliminary file's PRCP differs by a median of 129 mm/yr.
+  - The published file was regenerated 2021-05-08 by `txt2nc_vic_wf_CanESM2.py`.
+  - The full re-check on published monthly files (~50 GB) is pending.
 
 ## 1. RCP4.5 VIC outputs don't line up with the RCP4.5 forcing (all 10 models) — PRELIMINARY RELEASE
 

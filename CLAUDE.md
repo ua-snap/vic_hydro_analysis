@@ -83,9 +83,19 @@ dataset and endpoint names in `ua-snap/data-api`.
 **Access status (2026-11-13):**
 - `/beegfs/CMIP6/cparr4/AK_NCAR_12km/` (vic_hydro and met) is now readable. **It holds NCAR's
   PRELIMINARY release** (files created 2020-11, ncks 2021-04). SNAP's curation used the later
-  published "replacement" release (Atlas, Feb 2023, now gone; re-downloadable from NCAR). The
-  preliminary RCP4.5 runs have year misalignments; RCP8.5 appears unchanged between releases.
-  See notes/05.
+  published "replacement" release (Atlas, Feb 2023, now gone). The preliminary RCP4.5 runs have
+  year misalignments; RCP8.5 appears unchanged between releases. See notes/05.
+- **The published release is on NCAR GDEX as dataset `d010111`**, anonymous download, no token:
+  - URL pattern:
+    `https://osdf-director.osg-htc.org/ncar/gdex/d010111/alaska/{vic,met}/{daily,monthly}/BCSD/<model>/<rcp>/<model>_<rcp>_BCSD_{wf,ws,eb,met}_<year>.nc`
+  - Daymet is under `.../{vic,met}/{daily,monthly}/daymet/` (check the exact path).
+  - Verified: the daily `CanESM2_rcp45_BCSD_{wf,met}_2060.nc` MD5s equal the Feb 2023 wget
+    checksums in ardac-curation `download_scripts/`, so GDEX = the curated release.
+  - In that file, VIC PRCP equals the met pcp (the preliminary file doesn't), so NCAR fixed the
+    CanESM2 offset.
+  - File discovery: GDEX MCP server `https://gdex-mcp.k8s.ucar.edu/mcp` (public tools:
+    list_datasets, find_dataset_files, get_data_access). Helper:
+    `~/tmp/vic_hydro_analysis/gdex_call.sh <tool> '<json>'`.
 - `/beegfs/CMIP6/NCAR_VIC/NCAR_NetCDF/` is readable but is **not** NCAR source data. It's a
   derived set made in Feb 2025: daily 1950–2099 stacks, one file per model/scenario (15.6 GB
   each), **reprojected to EPSG:3338** (~11.94 km, 318×224, a transform attribute but no coordinate
