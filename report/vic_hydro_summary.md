@@ -83,7 +83,7 @@ NCAR GDEX d010111 (checksum-verified); 1980–2009 vs 2070–2099; 10 climate mo
    note: uncalibrated; use relative change and model agreement; not for extremes; RCP4.5 met
    before 2001 didn't drive the RCP4.5 hydrology; HadGEM2-ES met excluded; `glacier_melt` under
    review. Link `/arctic_hydrology` for streamflow. Send the NCAR inquiry.
-2. **Reprocess (moderate):** add total runoff, change values, multi-model statistics and HUC8/HUC10
+2. **Reprocess (moderate):** add total runoff, deltas, multi-model statistics and HUC8/HUC10
    summaries. Serve each run's actual forcing. Resolve or drop `glacier_melt`.
 3. **Retire later,** in stages, once downscaled CMIP6 snow and CMIP6-forced hydrology cover SWE
    and runoff.
