@@ -13,10 +13,7 @@ glaciers), reported for **single 12 km grid cells**, and its projected change ca
 opposite way from total runoff. We also found **data-consistency problems** in what we serve
 (section 3). Streamflow questions are better answered by our RASM-based `/arctic_hydrology`, and
 temperature, precipitation and SWE exist in newer SNAP products. Still, VIC-Hydro is our **only**
-projection of evapotranspiration, soil moisture, snowmelt and glacier melt, our only 12 km snow
-water equivalent (SWE), and our only end-of-century multi-model hydrology for Alaska.
-**Recommendation: Option C (reprocess)**, scoped tightly, with the data issues fixed and a
-planned sunset.
+projection of evapotranspiration, soil moisture, snowmelt and glacier melt.
 
 # 1. What it is (raw NCAR data)
 
@@ -27,8 +24,8 @@ RCP8.5)** downscaled with BCSD against Daymet, plus a Daymet-forced run for 1980
 that sustains winter and late-summer streamflow). **There is no river routing, so no
 streamflow.** The authors call the parameters "essentially uncalibrated" (transferred from CONUS,
 not calibrated in Alaska). That's a real limitation, but calibration alone doesn't make projected
-changes trustworthy (Mendoza et al., 2015). The run can't be redone; all options use existing
-outputs.
+changes trustworthy (Mendoza et al., 2015). The run can't be redone; all options in this document
+use existing outputs.
 
 # 2. What we have (SNAP curated product)
 
@@ -36,22 +33,20 @@ We serve 12 variables (`evap, glacier_melt, iwe, pcp, runoff, sm1–3, snow_melt
 as **decadal averages of monthly totals, means or maxima**, rounded to whole mm, per model,
 scenario, month and decade, by **point query only** (one 12 km cell) through the data-api,
 earthmaps.io and Arctic-EDS. Arctic-EDS labels surface runoff simply "Runoff". **Not served:**
-baseflow or total runoff, the Daymet run, change values, multi-model summaries, watershed
-summaries.
+baseflow or total runoff, the Daymet run, deltas, multi-model summaries, watershed summaries.
 
 | Use | Raw NCAR data | SNAP curated product |
-|:--------------------------------------|:-------------------------|:----------------------------|
-| Watershed water yield and its change | **Yes** (surface runoff + baseflow, summed over a watershed) | **No**: surface runoff only, per cell |
-| Streamflow / hydrographs | Only after routing (not done) | **No** (use `/arctic_hydrology`) |
-| Snowpack (SWE), snowmelt timing | **Yes**, daily | **Partly**: monthly peaks and totals. SWE also in `/cmip6` (`snw`), coarser |
-| Evapotranspiration, soil-moisture anomalies | **Yes**, best as relative change | **Partly**: per cell, no change values |
-| Range across climate models | **Yes** (10 models × 2 scenarios) | **Partly**: no multi-model summary |
-| Temperature and precipitation | Yes, as the forcing that drove VIC | Served; newer versions in `/cmip6_downscaled`, `/era5wrf` |
-| Daily extremes, design floods, low flows | **No** (BCSD handles extremes poorly) | **No** |
+|:----------------------------------------|:----------------------------|:------------------------------------|
+| Watershed water yield and its change | **Yes** (sum runoff + baseflow) | **No**: surface runoff, per cell |
+| Streamflow / hydrographs | Only after routing | **No** (use `/arctic_hydrology`) |
+| Snowpack (SWE), snowmelt timing | **Yes**, daily | **Partly**: monthly; SWE also in `/cmip6` |
+| Evapotranspiration, soil moisture | **Yes**, as relative change | **Partly**: per cell, no deltas |
+| Range across climate models | **Yes**, 10 GCMs × 2 RCPs | **Partly**: no multi-model summary |
+| Temperature and precipitation (VIC forcing) | **Yes** | **Yes** |
+| Daily extremes, design floods, low flows | **No** (BCSD limits) | **No** |
 
 ![**One grid cell vs. one watershed.** A typical Alaska HUC8 watershed (median 10,100 km²)
-covers about 70 VIC grid cells, and flow at its outlet integrates all of them. Polygons come
-from earthmaps.io `/boundary`.](../figures/fig1_cell_vs_watershed.pdf){width=64%}
+covers about 70 VIC grid cells.](../figures/fig1_cell_vs_watershed.pdf){width=64%}
 
 # 3. What our checks on NCAR's published files show
 
@@ -62,11 +57,14 @@ NCAR GDEX d010111 (checksum-verified); 1980–2009 vs 2070–2099; 10 climate mo
 - **The served variable misstates change.** Under RCP8.5, domain-wide surface runoff falls
   **17%**, while baseflow rises 63% and total runoff **rises 9%**. In the median HUC8, surface
   runoff rises 32% but total runoff rises 51%. **22 of 149 HUC8s** change in opposite directions.
-- **Mismatched pairs in what we serve.**
-  - NCAR's RCP4.5 hydrology for 1950–2000 is the RCP8.5-driven run, but we serve RCP4.5
-    `pcp`/`tmax`/`tmin` beside it (an inquiry to NCAR is drafted).
-  - HadGEM2-ES met data is silently missing.
-  - `glacier_melt` values (20–40 m/yr) are implausible as cell averages.
+- **For RCP4.5 before 2001, the precipitation and temperature we serve didn't drive the hydrology
+  we serve.** In NCAR's files, the RCP4.5 hydrology for 1950–2000 (CanESM2: 1950–2005) is a copy
+  of the RCP8.5 run. The RCP4.5 met files hold different precipitation and temperature for those
+  years. We serve both side by side, so for those years `pcp`/`tmax`/`tmin` aren't the inputs
+  behind the runoff, ET and snow shown with them. We've drafted an inquiry to NCAR.
+- **Other quality issues.** HadGEM2-ES `pcp`/`tmax`/`tmin` are missing from the API without
+  explanation: curation excluded them because NCAR's 2005 files lack December. And `glacier_melt`
+  values (20–40 m/yr in glacier cells) are too large to be grid-cell averages.
 
 # 4. Options
 
@@ -74,7 +72,7 @@ NCAR GDEX d010111 (checksum-verified); 1980–2009 vs 2070–2099; 10 climate mo
 |:---------|:--------------------|:----------------------|:-------------------------------------------|
 | **What** | No changes. | Retire the coverage, `/hydrology` route and Arctic-EDS section. Point users to NCAR and `/arctic_hydrology`. | Add `baseflow` and `total_runoff` (from daily data), change from baseline (incl. the Daymet run), and multi-model median, range and sign agreement. Serve **HUC8/HUC10 averages** via existing `/places` IDs. Keep `tmax`/`tmin`/`pcp` as labeled **VIC forcing**, paired with the run that drove each scenario. Our other precipitation products are 20–40% wetter at test points, so pairing them with VIC breaks the water balance. Fix the section 3 issues. |
 | **Pros** | No cost. Nothing breaks. Keeps our only 12 km SWE until downscaled CMIP6 snow ships. | Removes a product experts say invites misuse, along with its data issues. Less to maintain. | Fixes the critique (wrong variable, wrong scale) and the data issues. Keeps unique variables and the 10-model end-of-century range, which complements RASM (one model family, mid-century). Change plus model agreement is the defensible use of uncalibrated output. |
-| **Cons** | The critique stands. `runoff` omits half the water and can show the wrong direction of change. Data issues stay undocumented. | Loses ET, soil-moisture, snowmelt and glacier-melt projections and 12 km SWE. Breaks existing clients. | Staff time (curation, Rasdaman, API, front ends). Still CMIP5/BCSD and uncalibrated: better presentation, not better skill. Not routed streamflow. |
+| **Cons** | The critique stands. `runoff` omits half the water and can show the wrong direction of change. Data issues stay undocumented. | Loses ET, soil-moisture, snowmelt and glacier-melt projections and 12 km SWE. | Staff time (curation, Rasdaman, API, front ends). Still CMIP5/BCSD and uncalibrated: better presentation, not better skill. Not routed streamflow. |
 | **Effort** | None | Low | Moderate |
 
 # 5. Recommendation and next steps
