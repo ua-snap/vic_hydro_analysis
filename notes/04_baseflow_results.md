@@ -1,5 +1,12 @@
 # 04 — Baseflow results (raw NCAR monthly wf files)
 
+> **Superseded (2026-11-13):** the analysis was re-run on NCAR's *published* release (GDEX d010111,
+> job 744367), and the results are in `results/published/`. RCP8.5 and the non-glacier shares are
+> essentially unchanged: non-glacier 48–50% (Nov–Apr 52–56%); RCP8.5 late century surface −17%,
+> baseflow +63%, total +9%; 22 of 149 HUC8s with opposite signs. The published RCP4.5 values are
+> now valid: late century surface −21% (−28 to −14), baseflow +39%, total −2% (−11 to +6). The
+> report uses the published numbers. The text below is the original preliminary-release analysis.
+
 Job 744113, 2026-11-13. Script `scripts/baseflow_analysis.py`, outputs in
 `~/tmp/vic_hydro_analysis/baseflow/` (small CSVs copied to `results/baseflow/`).
 
