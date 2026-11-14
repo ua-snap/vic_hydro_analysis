@@ -77,8 +77,14 @@ list:
 - Its PRCP equals the published **RCP8.5** met pcp (annual r = 1.000, median |d| 0 mm).
 - It differs from the published **RCP4.5** met pcp by a median of 99 mm/yr.
 - So NCAR's published release labels one shared historical VIC run (RCP8.5-forced) as both
-  scenarios, while shipping scenario-specific historical met files. The year where RCP4.5 switches
-  to its own forcing comes from the full alignment run (job 744119).
+  scenarios, while shipping scenario-specific historical met files.
+- **Full published-release alignment (job 744367, all 10 GCMs, every year; exact match ~0.01 mm):**
+  - RCP8.5 VIC matches RCP8.5 met for 1950–2099.
+  - RCP4.5 VIC matches **RCP8.5 met for 1950–2000** (CanESM2: 1950–2005), then **RCP4.5 met from
+    2001** (CanESM2: 2006).
+  - No offsets or unmatched years: the preliminary-release problems are absent.
+  - Results: `results/published/forcing_year_alignment_published.csv`.
+- Draft inquiry to NCAR, with figures: `correspondence/ncar_gdex_d010111/`.
 
 **Is this a known/documented issue? No (searched 2026-11-13).**
 - Not documented in the NCAR README (`oconus_bcsd_vic_projections_readme.pdf`, GDEX d010111

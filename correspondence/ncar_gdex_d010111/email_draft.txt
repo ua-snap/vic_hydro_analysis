@@ -1,0 +1,76 @@
+To: dattore@ucar.edu
+Cc: (optional: dataset authors at NCAR RAL, e.g. Naoki Mizukami / Andy Newman, if you have their addresses)
+Subject: Question about the historical period in GDEX d010111 (21st Century Hydrologic Projections for Alaska and Hawaii)
+
+Attachments:
+  fig1_timeseries_ACCESS1-3.png
+  fig2_scatter_ACCESS1-3_1985.png
+  fig3_all_models_rcp45_forcing.png
+
+------------------------------------------------------------------------
+
+Hello Bob,
+
+I work with the Scenarios Network for Alaska + Arctic Planning (SNAP) at the University of Alaska
+Fairbanks. We distribute summaries of the Alaska portion of "21st Century Hydrologic Projections
+for Alaska and Hawaii" (GDEX d010111, doi:10.5065/c3kn-2y77) through our data API and web tools.
+While reviewing our holdings we found something in the published Alaska files that we'd like to
+check with you, or with the dataset authors if that's more appropriate.
+
+Summary: for 1950-2000, the VIC output in the Alaska RCP4.5 files is identical, cell for cell, to
+the VIC output in the RCP8.5 files, and its precipitation matches the RCP8.5 BCSD forcing, not
+the RCP4.5 BCSD forcing distributed with it. (For CanESM2 this runs through 2005.) The RCP4.5 and
+RCP8.5 BCSD met files differ in those years, so for that period the RCP4.5 met files don't
+correspond to the RCP4.5 VIC output. From 2001 onward (2006 for CanESM2), the RCP4.5 VIC output
+matches the RCP4.5 met files exactly, as expected.
+
+What we did:
+- Downloaded the Alaska vic/ and met/ files from GDEX (monthly, plus some daily). The daily files
+  we spot-checked have MD5 checksums identical to those in the Climate Data Gateway wget scripts
+  we used in February 2023, so this is the same release.
+- For every GCM and year, compared VIC's PRCP output (wf files) with the BCSD pcp in the met files
+  for both scenarios. Monthly pcp is a mean daily rate, so it was multiplied by days in month.
+- Example, ACCESS1-3, 1985 (attachment 2; 14,227 land cells):
+    * VIC PRCP in ACCESS1-3_rcp45_BCSD_wf_1985.nc equals pcp in ACCESS1-3_rcp85_BCSD_met_1985.nc:
+      annual totals agree within 0.5 mm in 95% of cells, median difference 0.0 mm.
+    * It differs from pcp in ACCESS1-3_rcp45_BCSD_met_1985.nc: 0.4% of cells agree, median annual
+      difference 99 mm.
+    * RUNOFF in the RCP4.5 and RCP8.5 wf files for 1985 is identical in every cell.
+- Attachment 1 shows the full 1950-2099 record for ACCESS1-3. Attachment 3 shows that the same
+  pattern holds for all 10 GCMs, with an exact year-by-year match in every case.
+
+Since both RCPs branch from the same CMIP5 historical experiment, a shared historical VIC run may
+well be intentional. If so, could you help us with a few questions?
+
+1. Is it intended that the RCP4.5 VIC files for 1950-2000 (1950-2005 for CanESM2) contain the
+   historical run forced by the RCP8.5 BCSD files?
+2. If so, which met files should users pair with the RCP4.5 hydrology for those years: the RCP8.5
+   ones? We currently serve the RCP4.5 met files next to the RCP4.5 hydrology, so for those years
+   the precipitation and temperature we show weren't the forcing for the hydrology we show.
+3. Why do the RCP4.5 and RCP8.5 BCSD met files differ in the historical years? Was BCSD applied
+   separately to each scenario's combined historical+RCP series?
+4. The switch to scenario-specific forcing happens at 2001 for nine GCMs but at 2006 for CanESM2.
+   The CMIP5 RCP experiments start in 2006. Is 2001 the intended branch year?
+5. Could a note about this be added to the dataset README (oconus_bcsd_vic_projections_readme.pdf),
+   which doesn't currently mention it?
+
+Two smaller items from the same review, in case they're useful:
+- HadGEM2-ES_rcp45_BCSD_met_2005.nc and HadGEM2-ES_rcp85_BCSD_met_2005.nc contain 334 days (no
+  December 2005). This may be because the HadGEM2-ES CMIP5 historical experiment ends in November
+  2005.
+- In glacier cells, annual GLACIER_MELT totals are very large: the median across glacier cells is
+  roughly 20-40 m/yr (1980-2009 means). That's much more than the cell-level water-balance
+  deficit (PRCP - EVAP - RUNOFF - BASEFLOW), which is roughly 0.7-1.7 m/yr. Is GLACIER_MELT
+  reported per unit glacier area rather than per unit grid-cell area? The README lists its units
+  as mm/day.
+
+We're happy to share our scripts and the full year-by-year comparison tables.
+Thank you for the dataset, and for any help with this.
+
+Best regards,
+
+[Your name]
+[Title]
+Scenarios Network for Alaska + Arctic Planning (SNAP)
+University of Alaska Fairbanks
+[Email / phone]

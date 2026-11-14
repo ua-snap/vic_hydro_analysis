@@ -46,8 +46,10 @@ print(f"met pcp units attr: {PCP_UNITS!r} -> treating as {'daily rate' if PCP_IS
 def met_field(m, s, y):
     with xr.open_dataset(MET / f"BCSD/{m}/{s}/{m}_{s}_BCSD_met_{y}.nc", decode_times=False) as ds:
         days = np.array([calendar.monthrange(y, k)[1] for k in range(1, 13)])[:, None]
-        v = ds.pcp.values[:, iy, ix]
-        return v * days if PCP_IS_RATE else v  # (12, cells) mm/month
+        v = ds.pcp.values[:, iy, ix].astype("float64")
+    if v.shape[0] < 12:  # e.g. HadGEM2-ES 2005 met files lack December: pad with NaN
+        v = np.vstack([v, np.full((12 - v.shape[0], v.shape[1]), np.nan)])
+    return v * days if PCP_IS_RATE else v  # (12, cells) mm/month
 
 
 def wf_field(m, s, y):
