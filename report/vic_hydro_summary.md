@@ -52,19 +52,27 @@ covers about 70 VIC grid cells.](../figures/fig1_cell_vs_watershed.pdf){width=64
 
 NCAR GDEX d010111 (checksum-verified); 1980–2009 vs 2070–2099; 10 climate models.
 
-- **Baseflow is about half of runoff.** Outside glacier cells it's **48–50%** of total runoff
-  (52–56% in Nov–Apr). The median across 149 Alaska HUC8 watersheds is 38% (range 4–68%).
-- **The served variable misstates change.** Under RCP8.5, domain-wide surface runoff falls
+- **We're missing baseflow, about half of runoff** (Fig. 2a). Outside glacier cells it's
+  **48–50%** of total runoff (52–56% in Nov–Apr), and it carries most of the late-summer and winter
+  flow. The median across 149 Alaska HUC8 watersheds is 38% (range 4–68%).
+- **The served variable misstates change** (Fig. 2b). Under RCP8.5, domain-wide surface runoff falls
   **17%**, while baseflow rises 63% and total runoff **rises 9%**. In the median HUC8, surface
   runoff rises 32% but total runoff rises 51%. **22 of 149 HUC8s** change in opposite directions.
 - **For RCP4.5 before 2001, the precipitation and temperature we serve didn't drive the hydrology
-  we serve.** In NCAR's files, the RCP4.5 hydrology for 1950–2000 (CanESM2: 1950–2005) is a copy
+  we serve** (Fig. 2c). In NCAR's files, the RCP4.5 hydrology for 1950–2000 (CanESM2: 1950–2005) is a copy
   of the RCP8.5 run. The RCP4.5 met files hold different precipitation and temperature for those
   years. We serve both side by side, so for those years `pcp`/`tmax`/`tmin` aren't the inputs
   behind the runoff, ET and snow shown with them. We've drafted an inquiry to NCAR.
 - **Other quality issues.** HadGEM2-ES `pcp`/`tmax`/`tmin` are missing from the API without
   explanation: curation excluded them because NCAR's 2005 files lack December. And `glacier_melt`
   values (20–40 m/yr in glacier cells) are too large to be grid-cell averages.
+
+![**What we serve leaves out half the water, misstates its change, and mixes runs.**
+(a) Monthly surface runoff and baseflow, non-glacier land cells, 1980–2009, 10-model mean.
+(b) RCP8.5 change, 1980–2009 to 2070–2099, domain-wide; bars are the 10-model mean, dots are
+single models. (c) Difference between the RCP4.5 and RCP8.5 files for one model (ACCESS1-3),
+averaged over land cells; zero means identical. All 10 models show the same
+pattern.](../figures/fig2_section3_issues.pdf){width=100%}
 
 # 4. Options
 
@@ -74,6 +82,8 @@ NCAR GDEX d010111 (checksum-verified); 1980–2009 vs 2070–2099; 10 climate mo
 | **Pros** | No cost. Nothing breaks. Keeps our only 12 km SWE until downscaled CMIP6 snow ships. | Removes a product experts say invites misuse, along with its data issues. Less to maintain. | Fixes the critique (wrong variable, wrong scale) and the data issues. Keeps unique variables and the 10-model end-of-century range, which complements RASM (one model family, mid-century). Change plus model agreement is the defensible use of uncalibrated output. |
 | **Cons** | The critique stands. `runoff` omits half the water and can show the wrong direction of change. Data issues stay undocumented. | Loses ET, soil-moisture, snowmelt and glacier-melt projections and 12 km SWE. | Staff time (curation, Rasdaman, API, front ends). Still CMIP5/BCSD and uncalibrated: better presentation, not better skill. Not routed streamflow. |
 | **Effort** | None | Low | Moderate |
+
+\newpage
 
 # 5. Recommendation and next steps
 
