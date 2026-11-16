@@ -3,9 +3,10 @@
 Uses only the PUBLISHED release downloaded from GDEX (monthly files; daily files MD5-verified
 against the Feb 2023 NCAR wget checksums).
 
-Figure 1  <model>: domain-mean annual precipitation 1950-2099 from VIC wf PRCP (RCP4.5, RCP8.5) and
-          BCSD met pcp (RCP4.5, RCP8.5), plus the per-year share of land cells where VIC RCP4.5
-          PRCP equals each met scenario's pcp (annual totals within 0.5 mm).
+Figure 1  <model>, 1950-2099, as differences between files (mean over land cells of the per-cell
+          |difference| in annual totals; zero = identical files):
+            a. met pcp RCP4.5 vs RCP8.5, and VIC RUNOFF RCP4.5 vs RCP8.5
+            b. VIC RCP4.5 PRCP vs met pcp RCP4.5, and vs met pcp RCP8.5
 Figure 2  <model>, one year: per-cell annual totals - VIC RCP4.5 PRCP vs met RCP4.5 pcp, vs met
           RCP8.5 pcp, and VIC RCP4.5 RUNOFF vs VIC RCP8.5 RUNOFF.
 Figure 3  all models: which met scenario VIC RCP4.5 PRCP matches, per year (from the alignment CSV
@@ -56,43 +57,67 @@ def met_pcp(m, s, y):
 
 land = np.isfinite(wf(MODEL, "rcp85", 2050, "RUNOFF"))
 
-# ---------------- Figure 1: time series + agreement
+# ---------------- Figure 1: differences, not overlapping levels
+# Every line is a per-cell absolute difference between two files, averaged over land cells
+# (mm/yr of annual totals). Zero means the two files are identical cell for cell, so "same data"
+# shows up as a line on the zero axis instead of one line hidden under another.
 rows = []
 for y in YEARS:
-    v45, v85 = wf(MODEL, "rcp45", y, "PRCP"), wf(MODEL, "rcp85", y, "PRCP")
+    v45 = wf(MODEL, "rcp45", y, "PRCP")
+    r45, r85 = wf(MODEL, "rcp45", y, "RUNOFF"), wf(MODEL, "rcp85", y, "RUNOFF")
     m45, m85 = met_pcp(MODEL, "rcp45", y), met_pcp(MODEL, "rcp85", y)
-    rows.append({"year": y, "vic45": np.nanmean(v45[land]), "vic85": np.nanmean(v85[land]),
-                 "met45": np.nanmean(m45[land]), "met85": np.nanmean(m85[land]),
-                 "agree_met45": np.mean(np.abs(v45 - m45)[land] < 0.5),
-                 "agree_met85": np.mean(np.abs(v45 - m85)[land] < 0.5)})
+    ok = land & np.isfinite(v45) & np.isfinite(r45) & np.isfinite(r85) & np.isfinite(m45) & np.isfinite(m85)
+    rows.append({"year": y,
+                 "d_met45_met85": np.mean(np.abs(m45 - m85)[ok]),      # forcing: RCP4.5 vs RCP8.5
+                 "d_runoff45_runoff85": np.mean(np.abs(r45 - r85)[ok]),  # VIC output: RCP4.5 vs RCP8.5
+                 "d_vic45_met45": np.mean(np.abs(v45 - m45)[ok]),      # RCP4.5 VIC PRCP vs RCP4.5 forcing
+                 "d_vic45_met85": np.mean(np.abs(v45 - m85)[ok]),      # RCP4.5 VIC PRCP vs RCP8.5 forcing
+                 "agree_met45": np.mean(np.abs(v45 - m45)[ok] < 0.5),
+                 "agree_met85": np.mean(np.abs(v45 - m85)[ok] < 0.5),
+                 "n_cells": int(ok.sum())})
 ts = pd.DataFrame(rows)
 ts.to_csv(OUT / f"timeseries_{MODEL}.csv", index=False)
 switch = ts.loc[ts.agree_met45 > 0.9, "year"].min()
 last_shared = ts.loc[(ts.year < switch) & (ts.agree_met85 > 0.9), "year"].max()
 print(f"{MODEL}: VIC RCP4.5 PRCP matches RCP8.5 met through {last_shared}; matches RCP4.5 met from {switch}")
+pre = ts.year < switch
+print(ts.loc[pre, ["d_met45_met85", "d_runoff45_runoff85", "d_vic45_met45", "d_vic45_met85"]]
+      .agg(["mean", "max"]).round(2).to_string())
 
-fig, (a1, a2) = plt.subplots(2, 1, figsize=(8.5, 6.2), sharex=True, gridspec_kw={"height_ratios": [2.2, 1]})
-lab = {"vic45": "VIC output PRCP, RCP4.5 files", "vic85": "VIC output PRCP, RCP8.5 files",
-       "met45": "BCSD met pcp, RCP4.5 files", "met85": "BCSD met pcp, RCP8.5 files (hidden: identical to orange)"}
-for k, lw, ls in [("met45", 2, "-"), ("met85", 2, "-"), ("vic85", 2, "-"), ("vic45", 2, (0, (3, 2)))]:
-    a1.plot(ts.year, ts[k], color=C[k], lw=lw, ls=ls, label=lab[k])
-a1.axvspan(1950, switch - 0.5, color=GRID, alpha=0.6, lw=0)
-a1.text(1951, a1.get_ylim()[1], f"1950–{switch - 1}: VIC RCP4.5 output = VIC RCP8.5 output,\n"
-        f"forced by RCP8.5 met, not RCP4.5 met", va="top", fontsize=8.5, color=INK)
-a1.set_ylabel("Domain-mean annual precipitation (mm)")
-a1.set_title(f"{MODEL}: precipitation in VIC output vs. BCSD forcing files (GDEX d010111)",
-             loc="left", fontsize=10.5)
-a1.legend(frameon=False, fontsize=8, loc="lower right", ncol=2)
-a1.grid(axis="y", color=GRID, lw=0.6)
+fig, (a1, a2) = plt.subplots(2, 1, figsize=(8.5, 5.8), sharex=True)
+for ax in (a1, a2):
+    ax.axvspan(1949.5, switch - 0.5, color=GRID, alpha=0.6, lw=0)
+    ax.axhline(0, color=INK2, lw=0.8)
+    ax.grid(axis="y", color=GRID, lw=0.6)
+    ax.set_xlim(1950, 2099)
+    ax.text(1951, 0.97, f"1950–{switch - 1}", transform=ax.get_xaxis_transform(), fontsize=8.5,
+            color=INK2, va="top")
 
-a2.plot(ts.year, ts.agree_met85 * 100, color=C["met85"], lw=2, label="matches RCP8.5 met")
-a2.plot(ts.year, ts.agree_met45 * 100, color=C["met45"], lw=2, label="matches RCP4.5 met")
-a2.axvspan(1950, switch - 0.5, color=GRID, alpha=0.6, lw=0)
-a2.set_ylabel("% of land cells where\nVIC RCP4.5 PRCP equals\nmet pcp (±0.5 mm/yr)")
-a2.set_ylim(-5, 105)
-a2.set_xlim(1950, 2099)
-a2.legend(frameon=False, fontsize=8, loc="center right")
-a2.grid(axis="y", color=GRID, lw=0.6)
+# Panel a: the forcing files differ between scenarios, the VIC output does not (until the switch)
+a1.plot(ts.year, ts.d_met45_met85, color=INK2, lw=2,
+        label="BCSD forcing precipitation (met pcp): RCP4.5 file vs RCP8.5 file")
+a1.plot(ts.year, ts.d_runoff45_runoff85, color=C["vic45"], lw=2,
+        label="VIC output runoff (wf RUNOFF): RCP4.5 file vs RCP8.5 file")
+a1.set_title(f"a. The two scenarios' forcing differs, but their VIC output is identical through {switch - 1}",
+             loc="left", fontsize=10)
+a1.set_ylim(-0.04 * ts.d_met45_met85.max(), 1.3 * ts.d_met45_met85.max())
+a1.legend(frameon=False, fontsize=8, loc="upper right", ncol=1)
+a1.set_ylabel("Mean |difference|\n(mm/yr)")
+
+# Panel b: which forcing reproduces the RCP4.5 VIC precipitation
+a2.plot(ts.year, ts.d_vic45_met45, color=C["met45"], lw=2, label="VIC PRCP (RCP4.5 wf file) vs RCP4.5 forcing (met pcp, RCP4.5 file)")
+a2.plot(ts.year, ts.d_vic45_met85, color=C["met85"], lw=2, label="VIC PRCP (RCP4.5 wf file) vs RCP8.5 forcing (met pcp, RCP8.5 file)")
+a2.set_title(f"b. Precipitation inside the RCP4.5 VIC run (wf PRCP) matches the RCP8.5 forcing through {switch - 1}",
+             loc="left", fontsize=10)
+_top = max(ts.d_vic45_met45.max(), ts.d_vic45_met85.max())
+a2.set_ylim(-0.04 * _top, 1.3 * _top)
+a2.legend(frameon=False, fontsize=8, loc="upper right")
+a2.set_ylabel("Mean |difference|\n(mm/yr)")
+a2.set_xlabel("Year")
+
+fig.suptitle(f"{MODEL}, GDEX d010111 (Alaska). Each line: per-cell |difference| in annual totals between two "
+             f"files,\naveraged over {int(ts.n_cells.median()):,} land cells. A line at zero means the two files "
+             f"are identical.", x=0.01, ha="left", fontsize=9, color=INK2)
 fig.tight_layout()
 fig.savefig(OUT / f"fig1_timeseries_{MODEL}.png", dpi=200)
 plt.close(fig)
