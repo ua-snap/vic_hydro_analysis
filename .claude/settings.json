@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sacct *)",
+      "Bash(squeue *)",
+      "Bash(unzip -l *)",
+      "Bash(gdalinfo *)",
+      "Bash(sinfo)",
+      "Bash(sinfo *)",
+      "Bash(ncdump *)",
+      "Bash(pdfinfo *)",
+      "Bash(git check-ignore *)",
+      "Bash(fc-list)",
+      "Bash(fc-list *)",
+      "Bash(conda env list)",
+      "Bash(conda env list *)",
+      "Bash(kpsewhich *)",
+      "mcp__claude_ai_Claude_Docs__read"
+    ]
+  }
+}
