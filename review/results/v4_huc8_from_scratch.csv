@@ -1,0 +1,5 @@
+huc8,name,n_cells,RO_hist_mm,BF_hist_mm,dRO_pct_of_ens_mean,dTOT_pct_of_ens_mean,dRO_pct_mean_of_models,dTOT_pct_mean_of_models,dRO_pct_min,dRO_pct_max,dTOT_pct_min,dTOT_pct_max,n_models_RO_down,n_models_TOT_up,interannual_sd_RO_pct,interannual_sd_TOT_pct
+19010204,Admiralty Island,40,1160.3,1788.4,-1.5,15.6,-1.4,15.7,-13.3,12.1,4.3,30.9,7,10,21.2,19.9
+19010304,Taku River,36,3482.1,953.4,-23.2,0.9,-23.2,0.9,-33.9,-12.6,-8.7,11.5,10,5,11.7,14.1
+19020701,Kodiak-Afognak Islands,159,873.5,992.6,-6.6,26.0,-6.5,26.0,-17.1,1.0,14.0,37.8,8,10,27.3,24.1
+19060501,Canning River,46,107.0,29.0,-11.1,32.3,-10.8,33.0,-24.7,11.2,1.7,56.1,8,10,46.1,49.0
