@@ -1,0 +1,5 @@
+method,subset,n_huc8,n_huc8_total,median_n_cells,median_huc_area_km2,median_all157_area_km2,bf_share_median,bf_share_min,bf_share_max,bf_share_q25,bf_share_q75,dRO_median,dTOT_median,dRO_median_meanmodels,dTOT_median_meanmodels,n_sign_disagree,n_sign_disagree_meanmodels,n_disagree_minabs_lt5,n_disagree_minabs_lt2,n_disagree_both_gt5,n_RO_up,n_TOT_up
+centroid,all,149,157,70.0,10306.932,10124.327,0.381,0.036,0.675,0.219,0.434,31.925,51.286,32.686,52.373,22,22,9,5,13,95,117
+centroid,ge10cells,148,157,70.5,10327.311,10124.327,0.38,0.036,0.675,0.218,0.434,32.623,51.598,33.931,52.73,22,22,9,5,13,95,117
+overlap,all,150,157,100.5,10292.955,10124.327,0.381,0.035,0.682,0.228,0.435,30.225,51.821,31.025,52.722,24,24,9,5,15,95,119
+overlap,ge10cells,149,157,101.0,10306.932,10124.327,0.38,0.035,0.676,0.226,0.435,31.281,51.915,31.948,53.112,24,24,9,5,15,94,118
