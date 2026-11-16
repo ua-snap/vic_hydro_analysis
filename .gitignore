@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Private correspondence drafts (keep local only)
+correspondence/**/email_draft*.txt

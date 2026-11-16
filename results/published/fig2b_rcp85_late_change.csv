@@ -1,0 +1,11 @@
+model,statewide_dRO_pct,statewide_dBF_pct,statewide_dTOT_pct
+ACCESS1-3,-15.9,76.2,13.1
+CanESM2,-21.0,67.0,7.4
+CCSM4,-25.6,49.3,-2.3
+CSIRO-Mk3-6-0,-13.0,64.6,11.7
+GFDL-ESM2M,-15.7,38.0,1.2
+HadGEM2-ES,-17.0,73.2,12.0
+inmcm4,-12.8,71.4,14.3
+MIROC5,-19.9,51.4,2.6
+MPI-ESM-MR,-12.5,83.8,17.6
+MRI-CGCM3,-15.2,59.4,8.7
